@@ -3,7 +3,7 @@
 
     <string name="app_name">UICalculator</string>
     <string name="action_settings">Settings</string>
-    <string name="calculation">Type to start...</string>
+    <string name="calculation">Type to start &#8230;</string>
     
     <string name="zero">0</string>
     <string name="decimal">.</string>
@@ -21,7 +21,7 @@
     <string name="nine">9</string>
     <string name="subtract">-</string>
     <string name="clear">C</string>
-	<string name="backspace"></string>
+	<string name="backspace">&#60;</string>
     <string name="negative_toggle">-/+</string>
     <string name="add">+</string>
     
