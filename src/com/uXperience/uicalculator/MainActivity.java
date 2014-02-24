@@ -1,7 +1,5 @@
 package com.uXperience.uicalculator;
 
-import org.w3c.dom.Text;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
@@ -11,6 +9,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements OnClickListener {
+	
+	private TextView text;
+	private TextView debug;
 	
 	private Button button0;
 	private Button button1;
@@ -22,14 +23,37 @@ public class MainActivity extends Activity implements OnClickListener {
 	private Button button7;
 	private Button button8;
 	private Button button9;
+	private Button buttonDec;
 	
-	private int counter = 0;
+	//OPERATORS
+	private Button buttonBack;
+	private Button buttonAdd;
+	private Button buttonSub;
+	private Button buttonMult;
+	private Button buttonDiv;
+	private Button buttonEqual;
+	private Button buttonClear;
 	
+	//Saving the values to be used to calculate
+	private Double number1;
+	private Double number2;
+	private String operation = "";
+	private String history = "";
+	
+	private boolean isNum1Set = false;
+	private boolean workingOnTwo = false;
+	private boolean hasDecimal = false;
+	private boolean isContinuous = false;
+		
+	private String calcString = "";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        text = (TextView) findViewById(R.id.textView);
+        debug = (TextView) findViewById(R.id.DEBUG);
         
         button0 = (Button)findViewById(R.id.button17);
         button0.setOnClickListener(this);
@@ -61,8 +85,31 @@ public class MainActivity extends Activity implements OnClickListener {
         button9 = (Button)findViewById(R.id.button7);
         button9.setOnClickListener(this);
         
+        buttonDec = (Button)findViewById(R.id.button18);
+        buttonDec.setOnClickListener(this);
+        
+        //OPERATORS
+        buttonBack = (Button)findViewById(R.id.button2);
+        buttonBack.setOnClickListener(this);
+        
+        buttonAdd = (Button)findViewById(R.id.button4);
+        buttonAdd.setOnClickListener(this);
+        
+        buttonSub = (Button)findViewById(R.id.button8);
+        buttonSub.setOnClickListener(this);
+        
+        buttonMult = (Button)findViewById(R.id.button12);
+        buttonMult.setOnClickListener(this);
+        
+        buttonDiv = (Button)findViewById(R.id.button16);
+        buttonDiv.setOnClickListener(this);
+        
+        buttonEqual = (Button)findViewById(R.id.button19);
+        buttonEqual.setOnClickListener(this);
+        
+        buttonClear = (Button)findViewById(R.id.button1);
+        buttonClear.setOnClickListener(this);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,37 +120,214 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		TextView text = (TextView) findViewById(R.id.textView);
-		String pene = "";
-		
-		if(counter == 0)
-			text.setText("");
-		else
-			pene = text.getText().toString();
 		
 		//Can't switch on views
 		if(v == button0)
-			text.setText(pene + "0");
+		{
+			addToString("0");
+		}
 		else if(v == button1)
-			text.setText(pene + "1");
+		{
+			addToString("1");
+		}
 		else if(v == button2)
-			text.setText(pene + "2");
+		{
+			addToString("2");
+		}
 		else if(v == button3)
-			text.setText(pene + "3");
+		{
+			addToString("3");
+		}
 		else if(v == button4)
-			text.setText(pene + "4");
+		{
+			addToString("4");
+		}
 		else if(v == button5)
-			text.setText(pene + "5");
+		{
+			addToString("5");
+		}
 		else if(v == button6)
-			text.setText(pene + "6");
+		{
+			addToString("6");
+		}
 		else if(v == button7)
-			text.setText(pene + "7");
+		{
+			addToString("7");
+		}
 		else if(v == button8)
-			text.setText(pene + "8");
+		{
+			addToString("8");
+		}
 		else if(v == button9)
-			text.setText(pene + "9");
+		{
+			addToString("9");
+		}
+		else if(v == buttonDec && !hasDecimal)
+		{
+			//TODO: Might need to check if you can add more than 1 dec
+			addToString(".");
+			hasDecimal = true;
+		}
+		else if(v == buttonBack)
+		{
+			backspace();
+		}
+		else if(v == buttonEqual)
+		{
+			calculate();
+		}
+		else if(v == buttonClear)
+		{
+			clearCalculator();
+		}
 		
+		//OPERATORS
+		else if(v == buttonAdd || v == buttonSub || v == buttonMult || v == buttonDiv)
+		{
+			checkOperators(v);
+		}
 		
-		counter++;
+//		updateDebug(Double.toString(returnNumber(calcString)));
+
 	}
+	
+	public void updateDebug( String message ){
+		debug.setText(message);
+	}
+	
+	public void checkOperators(View v) {
+
+//		Let's add an operator!
+		if( v == buttonAdd ){
+			operation = "+";
+		} else if(v == buttonSub ) {
+			operation = "-";
+		} else if(v == buttonDiv ) {
+			operation = "/";
+		} else if(v == buttonMult ) {
+			operation = "x";
+		}
+		
+		updateDebug( calcString + " " + operation );
+		
+	}
+	
+	public void addToString(String value) {
+		
+		if( operation.isEmpty() ){
+			
+		} else {
+			if( workingOnTwo == false ){
+				workingOnTwo = true;
+				isNum1Set = true;
+				number1 = returnNumber(calcString);
+				updateDebug( number1 + " " + operation );
+				calcString = "";
+			}
+		}
+		
+		if(calcString.compareTo("0") == 0)
+			calcString = value;
+		else
+			calcString = calcString + value;
+		
+		text.setText(calcString);
+	}
+	
+	public Double returnNumber( String numberSequence ){
+		if(numberSequence.charAt(numberSequence.length()-1) == '.')
+			return Double.parseDouble(numberSequence + "0");
+		else
+			return Double.parseDouble(numberSequence);
+	}
+	
+	public void backspace() {
+		
+		if(calcString.isEmpty() || calcString.length() == 1)
+		{
+			if(calcString.charAt(calcString.length()-1) == '.')
+				hasDecimal = false;
+			
+			text.setText("");
+			calcString = "0";
+			return;
+		}
+		
+		if(calcString.charAt(calcString.length()-1) == '.')
+		{
+			hasDecimal = false;
+			calcString = calcString.substring(0, calcString.length()-1);
+		} else {
+			calcString = calcString.substring(0, calcString.length()-1);
+		}
+		
+		text.setText(calcString);
+	}
+	
+	public void clearCalculator() {
+		calcString = "0";
+		text.setText("");
+		hasDecimal = false;
+		workingOnTwo = false;
+		isContinuous = false;
+		number1 = 0.0;
+		number2 = 0.0;
+		operation = "";
+	}
+	
+	public void setupNum1() {
+		//Grabs from calcString
+		number1 = returnNumber(calcString);
+	}
+	
+	public void setupNum2() {
+		//Grabs from calcString
+		number2 = returnNumber(calcString);
+	}
+	
+	public void setOperation(String op) {
+		operation = op;
+	}
+	
+	public void calculate() {
+		
+		if(isNum1Set)
+		{
+//			if(
+//			history = history + number1 + " " + operation
+//			
+			if(!isContinuous)
+			{
+				number2 = returnNumber( calcString );
+			}
+			
+			if(operation.compareTo("+") == 0)
+			{
+				number1 = number1 + number2;
+				calcString = String.valueOf(number1);
+			}
+				
+			else if(operation.compareTo("-") == 0)
+			{
+				number1 = number1 - number2;
+				calcString = String.valueOf(number1);
+			}
+			else if(operation.compareTo("*") == 0)
+			{
+				number1 = number1 * number2;
+				calcString = String.valueOf(number1);
+			}
+			else 
+			{
+				number1 = number1 / number2;
+				calcString = String.valueOf(number1);
+			}
+			
+			debug.setText("");
+			text.setText(String.valueOf( number1 ));
+			
+		}
+		
+	}
+	
 }
