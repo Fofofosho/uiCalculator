@@ -33,6 +33,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private Button buttonDiv;
 	private Button buttonEqual;
 	private Button buttonClear;
+	private Button negativeToggle;
 	
 	//Saving the values to be used to calculate
 	private Double number1;
@@ -44,7 +45,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	private boolean workingOnTwo = false;
 	private boolean hasDecimal = false;
 	private boolean isContinuous = false;
-		
+	private boolean isNegative = false;
+	
 	private String calcString = "";
 	
     @Override
@@ -109,6 +111,9 @@ public class MainActivity extends Activity implements OnClickListener {
         
         buttonClear = (Button)findViewById(R.id.button1);
         buttonClear.setOnClickListener(this);
+        
+        negativeToggle = (Button)findViewById(R.id.button3);
+        negativeToggle.setOnClickListener(this);
     }
 
     @Override
@@ -184,9 +189,14 @@ public class MainActivity extends Activity implements OnClickListener {
 		//OPERATORS
 		else if(v == buttonAdd || v == buttonSub || v == buttonMult || v == buttonDiv)
 		{
+			isContinuous = false;
 			checkOperators(v);
 		}
 		
+		else if(v == negativeToggle)
+		{
+			flipSign();
+		}
 //		updateDebug(Double.toString(returnNumber(calcString)));
 
 	}
@@ -208,8 +218,15 @@ public class MainActivity extends Activity implements OnClickListener {
 			operation = "x";
 		}
 		
-		updateDebug( calcString + " " + operation );
+		if(!isNegative)
+		{
+			updateDebug( calcString + " " + operation );
+		}
 		
+		else
+		{
+			updateDebug("-" + calcString + " " + operation);
+		}
 	}
 	
 	public void addToString(String value) {
@@ -234,11 +251,24 @@ public class MainActivity extends Activity implements OnClickListener {
 		text.setText(calcString);
 	}
 	
-	public Double returnNumber( String numberSequence ){
-		if(numberSequence.charAt(numberSequence.length()-1) == '.')
-			return Double.parseDouble(numberSequence + "0");
+	public double returnNumber( String numberSequence ){
+		if(isNegative)
+		{
+			isNegative = false;
+			if(numberSequence.charAt(numberSequence.length()-1) == '.')
+				return Double.parseDouble(numberSequence + "0") * -1.0;
+			else
+				return Double.parseDouble(numberSequence) * -1.0;
+		}
+		
 		else
-			return Double.parseDouble(numberSequence);
+		{
+			if(numberSequence.charAt(numberSequence.length()-1) == '.')
+				return Double.parseDouble(numberSequence + "0");
+			else
+				return Double.parseDouble(numberSequence);
+		}
+		
 	}
 	
 	public void backspace() {
@@ -267,9 +297,11 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void clearCalculator() {
 		calcString = "0";
 		text.setText("");
+		debug.setText("");
 		hasDecimal = false;
 		workingOnTwo = false;
 		isContinuous = false;
+		isNegative = false;
 		number1 = 0.0;
 		number2 = 0.0;
 		operation = "";
@@ -289,6 +321,22 @@ public class MainActivity extends Activity implements OnClickListener {
 		operation = op;
 	}
 	
+	public void flipSign()
+	{
+		if(!isNegative)
+		{
+			text.setText("-" + calcString);
+			isNegative = true;
+			return;
+		}
+		
+		else
+		{
+			text.setText(calcString);
+			isNegative = false;
+		}
+	}
+	
 	public void calculate() {
 		
 		if(isNum1Set)
@@ -299,6 +347,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			if(!isContinuous)
 			{
 				number2 = returnNumber( calcString );
+				isContinuous = true;
 			}
 			
 			if(operation.compareTo("+") == 0)
@@ -312,7 +361,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				number1 = number1 - number2;
 				calcString = String.valueOf(number1);
 			}
-			else if(operation.compareTo("*") == 0)
+			else if(operation.compareTo("x") == 0)
 			{
 				number1 = number1 * number2;
 				calcString = String.valueOf(number1);
@@ -323,6 +372,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				calcString = String.valueOf(number1);
 			}
 			
+			workingOnTwo = false;
 			debug.setText("");
 			text.setText(String.valueOf( number1 ));
 			
