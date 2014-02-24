@@ -8,15 +8,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:text="@string/calculation"
-        android:textSize="30sp" />
-
     <TableLayout
         android:id="@+id/tableLayout1"
         android:layout_width="wrap_content"
@@ -35,12 +26,11 @@
                 android:layout_height="64sp"
                 android:text="@string/clear" />
 
-            <ImageButton
-                android:id="@+id/imageButton1"
+            <Button
+                android:id="@+id/button2"
                 android:layout_width="64sp"
-                android:layout_height="wrap_content"
-                android:src="@drawable/arrow_left" 
-                android:contentDescription="@string/backspace"/>
+                android:layout_height="64sp"  
+                android:text="@string/backspace"/>
 
             <Button
                 android:id="@+id/button3"
