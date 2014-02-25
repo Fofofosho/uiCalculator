@@ -169,7 +169,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		else if(v == buttonDec && !hasDecimal)
 		{
-			//TODO: Might need to check if you can add more than 1 dec
 			addToString(".");
 			hasDecimal = true;
 		}
@@ -197,7 +196,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		{
 			flipSign();
 		}
-//		updateDebug(Double.toString(returnNumber(calcString)));
 
 	}
 	
@@ -341,9 +339,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		if(isNum1Set)
 		{
-//			if(
-//			history = history + number1 + " " + operation
-//			
+
 			if(!isContinuous)
 			{
 				number2 = returnNumber( calcString );
@@ -373,6 +369,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			}
 			
 			workingOnTwo = false;
+			operation = "";
 			debug.setText("");
 			text.setText(String.valueOf( number1 ));
 			
