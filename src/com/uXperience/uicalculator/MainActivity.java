@@ -1,6 +1,7 @@
 package com.uXperience.uicalculator;
 
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
@@ -39,7 +40,6 @@ public class MainActivity extends Activity implements OnClickListener {
 	private Double number1;
 	private Double number2;
 	private String operation = "";
-	private String history = "";
 	
 	private boolean isNum1Set = false;
 	private boolean workingOnTwo = false;
@@ -47,12 +47,16 @@ public class MainActivity extends Activity implements OnClickListener {
 	private boolean isContinuous = false;
 	private boolean isNegative = false;
 	
+	private Vibrator myVib;
+	
 	private String calcString = "";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
         
         text = (TextView) findViewById(R.id.textView);
         debug = (TextView) findViewById(R.id.DEBUG);
@@ -125,6 +129,8 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+		
+		myVib.vibrate(50);
 		
 		//Can't switch on views
 		if(v == button0)
